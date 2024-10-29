@@ -11,8 +11,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: fossas/fossa-action@v1.4.0
+      - uses: fossas/fossa-action@main
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
           team: OpenEBS
-          project: mayastor-extensions
