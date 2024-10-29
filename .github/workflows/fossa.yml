@@ -15,3 +15,5 @@ jobs:
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
           team: OpenEBS
+          project: mayastor-extensions
+          branch: fossa-gh
