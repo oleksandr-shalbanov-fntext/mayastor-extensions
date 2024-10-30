@@ -1,23 +1,22 @@
 use clap::Parser;
-use openapi::tower::client::Url;
-use plugin::{rest_wrapper::RestClient, ExecuteOperation};
-use resources::Operations;
+use plugin::ExecuteOperation;
+use resources::{init_rest, Error, Operations};
 
 use std::{env, ops::Deref};
 
-mod resources;
+pub mod resources;
 
 #[derive(Parser, Debug)]
 #[clap(name = utils::package_description!(), version = utils::version_info_str!())]
 #[group(skip)]
 struct CliArgs {
-    /// The rest endpoint to connect to.
-    #[clap(global = true, long, short)]
-    rest: Option<Url>,
-
     /// The operation to be performed.
     #[clap(subcommand)]
     operations: Operations,
+
+    /// Kubernetes namespace of mayastor service
+    #[clap(global = true, long, short = 'n', default_value = "mayastor")]
+    namespace: String,
 
     #[clap(flatten)]
     args: resources::CliArgs,
@@ -25,9 +24,12 @@ struct CliArgs {
 
 impl CliArgs {
     fn args() -> Self {
-        CliArgs::parse()
+        let mut args = CliArgs::parse();
+        args.args.namespace = args.namespace.clone();
+        args
     }
 }
+
 impl Deref for CliArgs {
     type Target = plugin::CliArgs;
 
@@ -61,7 +63,7 @@ async fn main() {
 impl CliArgs {
     async fn execute(self) -> Result<(), Error> {
         // Initialise the REST client.
-        init_rest(&self).await?;
+        init_rest(&self.args).await?;
 
         tokio::select! {
             shutdown = shutdown::Shutdown::wait_sig() => {
@@ -71,48 +73,5 @@ impl CliArgs {
                 done
             }
         }
-    }
-}
-
-/// Initialise the REST client.
-async fn init_rest(cli_args: &CliArgs) -> Result<(), Error> {
-    // Use the supplied URL if there is one otherwise obtain one from the kubeconfig file.
-    match cli_args.rest.clone() {
-        Some(url) => RestClient::init(url, *cli_args.timeout).map_err(Error::RestClient),
-        None => {
-            let config = kube_proxy::ConfigBuilder::default_api_rest()
-                .with_kube_config(cli_args.args.kube_config_path.clone())
-                .with_timeout(*cli_args.timeout)
-                .with_target_mod(|t| t.with_namespace(&cli_args.args.namespace))
-                .build()
-                .await?;
-            RestClient::init_with_config(config)?;
-            Ok(())
-        }
-    }
-}
-
-pub enum Error {
-    Upgrade(upgrade::error::Error),
-    RestPlugin(plugin::resources::error::Error),
-    RestClient(anyhow::Error),
-    Generic(anyhow::Error),
-}
-
-impl From<upgrade::error::Error> for Error {
-    fn from(e: upgrade::error::Error) -> Self {
-        Error::Upgrade(e)
-    }
-}
-
-impl From<plugin::resources::error::Error> for Error {
-    fn from(e: plugin::resources::error::Error) -> Self {
-        Error::RestPlugin(e)
-    }
-}
-
-impl From<anyhow::Error> for Error {
-    fn from(e: anyhow::Error) -> Self {
-        Error::Generic(e)
     }
 }

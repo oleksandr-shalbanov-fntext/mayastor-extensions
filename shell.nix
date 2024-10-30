@@ -27,17 +27,19 @@ mkShell {
     cowsay
     git
     helm-docs
+    kubectl
     kubernetes-helm-wrapped
     llvmPackages.libclang
     niv
     nixpkgs-fmt
-    openapi-generator
+    paperclip
     openssl
     pkg-config
     pre-commit
     python3
     semver-tool
     utillinux
+    virtualenv
     which
     yq-go
     kind

@@ -62,7 +62,7 @@ rec {
     '';
     addPreBuild = "";
     nativeBuildInputs = with pkgs;
-      [ pkgconfig protobuf openapi-generator which git ] ++
+      [ pkgconfig protobuf paperclip which git ] ++
         [ rustPlatformDeps.pkgsTarget.stdenv.cc ] ++
         lib.optional (rustPlatformDeps.pkgsTarget.hostPlatform.isDarwin)
           [
