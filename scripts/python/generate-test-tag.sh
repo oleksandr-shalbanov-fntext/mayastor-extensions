@@ -3,6 +3,7 @@
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]:-"$0"}")")"
 ROOT_DIR="$SCRIPT_DIR/../.."
 
+# Imports
 source "$ROOT_DIR"/scripts/utils/log.sh
 source "$ROOT_DIR"/scripts/utils/repo.sh
 

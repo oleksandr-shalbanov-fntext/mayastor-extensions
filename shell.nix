@@ -18,6 +18,8 @@ in
 mkShell {
   name = "extensions-shell";
   buildInputs = [
+    autoflake
+    black
     cacert
     cargo-expand
     cargo-udeps
@@ -27,6 +29,7 @@ mkShell {
     cowsay
     git
     helm-docs
+    isort
     kubectl
     kubernetes-helm-wrapped
     llvmPackages.libclang
