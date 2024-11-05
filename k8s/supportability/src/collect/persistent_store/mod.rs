@@ -7,6 +7,7 @@ pub mod etcd;
 /// EtcdError holds the errors that can occur while trying to dump information
 /// from etcd database
 #[derive(Debug)]
+#[allow(unused)]
 pub(crate) enum EtcdError {
     Etcd(StoreError),
     K8sResource(K8sResourceError),

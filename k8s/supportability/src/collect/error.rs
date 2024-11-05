@@ -8,6 +8,7 @@ use std::ffi::OsString;
 /// with services in the system
 #[derive(Debug)]
 #[allow(clippy::enum_variant_names)]
+#[allow(unused)]
 pub(crate) enum Error {
     ResourceError(ResourceError),
     ArchiveError(std::io::Error),

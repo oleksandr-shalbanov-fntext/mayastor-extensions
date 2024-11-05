@@ -105,10 +105,9 @@ impl ExecuteOperation for Operations {
             Operations::Uncordon(resource) => resource.execute(cli_args).await?,
             Operations::Dump(resources) => {
                 // todo: build and pass arguments
-                resources.execute(&()).await.map_err(|e| {
+                resources.execute(&()).await.inspect_err(|_| {
                     // todo: check why is this here, can it be removed?
                     println!("Partially collected dump information: ");
-                    e
                 })?
             }
             Operations::Upgrade(resources) => {
@@ -165,7 +164,7 @@ impl From<anyhow::Error> for Error {
 pub async fn init_rest(cli_args: &CliArgs) -> Result<(), Error> {
     // Use the supplied URL if there is one otherwise obtain one from the kubeconfig file.
     match cli_args.rest.clone() {
-        Some(url) => RestClient::init(url, *cli_args.timeout).map_err(Error::RestClient),
+        Some(url) => RestClient::init(url, false, *cli_args.timeout).map_err(Error::RestClient),
         None => {
             let config = kube_proxy::ConfigBuilder::default_api_rest()
                 .with_kube_config(cli_args.kube_config_path.clone())

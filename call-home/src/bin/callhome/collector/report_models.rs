@@ -34,9 +34,8 @@ pub(crate) struct Volumes {
     volume_state_counts: VolumeStateCounts,
 }
 impl Volumes {
-    /// Receives a openapi::models::Volumes object and returns a new report_models::volume object by
-    /// using the data provided.
-
+    /// Receives an openapi::models::Volumes object and returns a new report_models::volume object
+    /// by using the data provided.
     pub(crate) fn new(volumes: Vec<Volume>, event_data: EventData) -> Self {
         let volumes_size_vector = get_volumes_size_vector(volumes.as_slice());
         Self {
@@ -64,8 +63,8 @@ struct VolumeReplicaCounts {
 }
 
 impl VolumeReplicaCounts {
-    // Receives a openapi::models::Volumes object and returns number of volumes with specific number
-    // of replicas.
+    // Receives an openapi::models::Volumes object and returns number of volumes with specific
+    // number of replicas.
     fn new(volumes: &[Volume]) -> Self {
         Self {
             one_replica: volumes
@@ -103,7 +102,7 @@ struct VolumeStateCounts {
 }
 
 impl VolumeStateCounts {
-    // Receives a openapi::models::Volumes object and returns number of volumes with specific state
+    // Receives an openapi::models::Volumes object and returns number of volumes with specific state
     // of the volume.
     fn new(volumes: &[Volume]) -> Self {
         Self {
@@ -172,7 +171,7 @@ pub(crate) struct Replicas {
     count_per_volume_percentiles: Percentiles,
 }
 impl Replicas {
-    /// Receives a Option<openapi::models::Volumes> and replica_count and returns a new
+    /// Receives an Option<openapi::models::Volumes> and replica_count and returns a new
     /// report_models::replica object by using the data provided.
     pub(crate) fn new(replica_count: usize, volumes: Option<Vec<Volume>>) -> Self {
         let mut replicas = Self::default();
@@ -359,7 +358,7 @@ impl MayastorManagedDisks {
         for pool_state in pools.into_iter().filter_map(|pool| pool.state) {
             // Retrieve the disks associated with the current pool's node.
             if let Some(disks) = node_disks.get(&pool_state.node) {
-                if let Some(pool_disk) = &pool_state.disks.get(0) {
+                if let Some(pool_disk) = &pool_state.disks.first() {
                     // Retrieve the block device associated with the pool disk.
                     match get_bdev(disks, pool_disk) {
                         Some(bdev) => {
@@ -560,12 +559,11 @@ fn get_replicas_size_vector(volumes: Vec<Volume>) -> Vec<u64> {
 }
 
 /// Gets a vector containing pool sizes from Vec<openapi::models::Pool>.
-fn get_pools_size_vector(pools: &Vec<openapi::models::Pool>) -> Vec<u64> {
+fn get_pools_size_vector(pools: &[openapi::models::Pool]) -> Vec<u64> {
     let mut pools_size_vector = Vec::with_capacity(pools.len());
     for pool in pools.iter() {
-        match &pool.state {
-            Some(pool_state) => pools_size_vector.push(pool_state.capacity),
-            None => {}
+        if let Some(pool_state) = &pool.state {
+            pools_size_vector.push(pool_state.capacity)
         };
     }
     pools_size_vector

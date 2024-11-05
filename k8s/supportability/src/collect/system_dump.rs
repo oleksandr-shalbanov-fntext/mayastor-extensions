@@ -258,7 +258,7 @@ impl SystemDumper {
         log("Completed collection of Kubernetes resource specific information".to_string());
 
         let mut path: PathBuf = std::path::PathBuf::new();
-        path.push(&self.dir_path.clone());
+        path.push(self.dir_path.clone());
 
         let _ = future::try_join_all(self.etcd_dumper.as_mut().map(|etcd_store| {
             log("Collecting mayastor specific information from Etcd...".to_string());

@@ -11,7 +11,6 @@ use collect::{
 };
 use operations::Resource;
 
-#[cfg(debug_assertions)]
 use collect::resources::{pool::PoolClientWrapper, traits::Topologer, volume::VolumeClientWrapper};
 
 use plugin::ExecuteOperation;
@@ -104,7 +103,6 @@ async fn execute_resource_dump(
     kube_config_path: Option<PathBuf>,
     resource: Resource,
 ) -> Result<(), Error> {
-    #[cfg(debug_assertions)]
     let topologer: Box<dyn Topologer>;
     let mut config = DumpConfig {
         rest_client: rest_client.clone(),
@@ -115,7 +113,6 @@ async fn execute_resource_dump(
         since: cli_args.since,
         kube_config_path,
         timeout: cli_args.timeout,
-        #[cfg(debug_assertions)]
         topologer: None,
         output_format: OutputFormat::Tar,
     };
@@ -154,7 +151,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Volumes => {
             let volume_client = VolumeClientWrapper::new(rest_client);
             topologer = volume_client.get_topologer(None).await?;
@@ -169,7 +165,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Volume { id } => {
             let volume_client = VolumeClientWrapper::new(rest_client);
             topologer = volume_client.get_topologer(Some(id)).await?;
@@ -186,7 +181,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Pools => {
             let pool_client = PoolClientWrapper::new(rest_client);
             topologer = pool_client.get_topologer(None).await?;
@@ -201,7 +195,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Pool { id } => {
             let pool_client = PoolClientWrapper::new(rest_client);
             topologer = pool_client.get_topologer(Some(id.to_string())).await?;
@@ -218,7 +211,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Nodes => {
             let node_client = NodeClientWrapper { rest_client };
             topologer = node_client.get_topologer(None).await?;
@@ -233,7 +225,6 @@ async fn execute_resource_dump(
                 errors.push(e);
             }
         }
-        #[cfg(debug_assertions)]
         Resource::Node { id } => {
             let node_client = NodeClientWrapper { rest_client };
             topologer = node_client.get_topologer(Some(id.to_string())).await?;

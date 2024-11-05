@@ -19,6 +19,7 @@ use std::{collections::HashSet, iter::Iterator, path::PathBuf};
 
 /// Error that can occur while interacting with logs module
 #[derive(Debug)]
+#[allow(unused)]
 pub(crate) enum LogError {
     Loki(loki::LokiError),
     K8sResource(K8sResourceError),

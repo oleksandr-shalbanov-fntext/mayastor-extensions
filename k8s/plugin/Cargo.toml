@@ -11,25 +11,23 @@ path = "src/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = [ "rls" ]
-rls = [ "openapi/tower-client-rls", "rest-plugin/rls" ]
-tls = [ "openapi/tower-client-tls", "rest-plugin/tls" ]
+default = ["rls"]
+rls = ["openapi/tower-client-rls", "rest-plugin/rls"]
+tls = ["openapi/tower-client-tls", "rest-plugin/tls"]
 
 
 [dependencies]
-openapi = { path = "../../dependencies/control-plane/openapi", default-features = false, features = [ "tower-trace" ] }
+openapi = { path = "../../dependencies/control-plane/openapi", default-features = false, features = ["tower-trace"] }
 utils = { path = "../../dependencies/control-plane/utils/utils-lib" }
 constants = { path = "../../constants" }
 rest-plugin = { path = "../../dependencies/control-plane/control-plane/plugin", default-features = false }
 console-logger = { path = "../../console-logger" }
 supportability = { path = "../supportability" }
 upgrade = { path = "../upgrade" }
-kube-proxy = { path = "../proxy" }
-tokio = { version = "1.33.0" }
-anyhow = "1.0.75"
-clap = { version = "4.4.6", features = ["color", "derive"] }
+kube-proxy = { path = "../../dependencies/control-plane/k8s/proxy" }
+tokio = { version = "1.41.0" }
+anyhow = "1.0.92"
+clap = { version = "4.5.20", features = ["color", "derive"] }
 humantime = "2.1.0"
-async-trait = "0.1.73"
-# Tracing
-opentelemetry = { version = "0.20.0", features = ["rt-tokio-current-thread"] }
+async-trait = "0.1.83"
 shutdown = { path = "../../dependencies/control-plane/utils/shutdown" }

@@ -1,12 +1,9 @@
-#[cfg(debug_assertions)]
 /// Represents type of VolumeID
 pub(crate) type VolumeID = openapi::apis::Uuid;
 
-#[cfg(debug_assertions)]
 /// Represents type of PoolID
 pub(crate) type PoolID = String;
 
-#[cfg(debug_assertions)]
 /// Represents type of NodeID
 pub(crate) type NodeID = String;
 
@@ -31,36 +28,30 @@ pub(crate) enum Resource {
     /// Collects entire system information
     System(SystemDumpArgs),
 
-    #[cfg(debug_assertions)]
     /// Collects information about all volumes and its descendants (replicas/pools/nodes)
-    #[clap(name = "volumes")]
+    #[clap(name = "volumes", hide = HIDE)]
     Volumes,
 
-    #[cfg(debug_assertions)]
     /// Collects information about particular volume and its descendants matching
     /// to given volume ID
-    #[clap(name = "volume")]
+    #[clap(name = "volume", hide = HIDE)]
     Volume { id: VolumeID },
 
-    #[cfg(debug_assertions)]
     /// Collects information about all pools and its descendants (nodes)
-    #[clap(name = "pools")]
+    #[clap(name = "pools", hide = HIDE)]
     Pools,
 
-    #[cfg(debug_assertions)]
     /// Collects information about particular pool and its descendants matching
     /// to given pool ID
-    #[clap(name = "pool")]
+    #[clap(name = "pool", hide = HIDE)]
     Pool { id: PoolID },
 
-    #[cfg(debug_assertions)]
     /// Collects information about all nodes
-    #[clap(name = "nodes")]
+    #[clap(name = "nodes", hide = HIDE)]
     Nodes,
 
-    #[cfg(debug_assertions)]
     /// Collects information about particular node matching to given node ID
-    #[clap(name = "node")]
+    #[clap(name = "node", hide = HIDE)]
     Node { id: NodeID },
 
     /// Collects information from etcd
@@ -71,6 +62,11 @@ pub(crate) enum Resource {
     },
 
     /// Collects the Loki logs from the product's components
-    #[clap(hide = true)]
+    #[clap(hide = HIDE)]
     Loki,
 }
+
+#[cfg(debug_assertions)]
+const HIDE: bool = true;
+#[cfg(not(debug_assertions))]
+const HIDE: bool = true;

@@ -15,6 +15,7 @@ use std::{collections::HashMap, fs::File, io::Write, path::PathBuf};
 
 /// Possible errors can occur while interacting with K8s for logs, and file creations
 #[derive(Debug)]
+#[allow(unused)]
 pub(crate) enum K8sLoggerError {
     K8sResourceError(K8sResourceError),
     IOError(std::io::Error),

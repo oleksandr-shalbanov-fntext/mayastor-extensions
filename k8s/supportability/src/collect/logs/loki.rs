@@ -3,7 +3,7 @@ use chrono::Utc;
 use hyper::body::Buf;
 use serde::{Deserialize, Serialize};
 use std::{io::Write, path::PathBuf};
-use tower::{util::BoxService, Service, ServiceExt};
+use tower::{Service, ServiceExt};
 
 /// Loki endpoint to query for logs
 const ENDPOINT: &str = "/loki/api/v1/query_range";
@@ -12,6 +12,7 @@ const SERVICE_NAME: &str = "loki";
 
 /// Possible errors can occur while interacting with Loki service
 #[derive(Debug)]
+#[allow(unused)]
 pub(crate) enum LokiError {
     Request(http::Error),
     Response(String),
@@ -86,7 +87,7 @@ impl LokiResponse {
                 .values
                 .last()
                 .unwrap_or(&vec![])
-                .get(0)
+                .first()
                 .unwrap_or(&"0".to_string())
                 .parse::<SinceTime>()
                 .unwrap_or(0),
@@ -159,16 +160,24 @@ impl LokiClient {
                 (uri.to_string(), svc)
             }
             Some(uri) => {
-                let mut connector = hyper::client::HttpConnector::new();
+                let mut connector = hyper_util::client::legacy::connect::HttpConnector::new();
+
                 connector.set_connect_timeout(Some(*timeout));
-                let client = hyper::Client::builder()
-                    .http2_keep_alive_timeout(*timeout)
-                    .http2_keep_alive_interval(*timeout / 2)
-                    .build(connector);
-                let service = tower::ServiceBuilder::new()
-                    .timeout(*timeout)
-                    .service(client);
-                (uri, BoxService::new(service))
+                let client = hyper_util::client::legacy::Client::builder(
+                    hyper_util::rt::TokioExecutor::new(),
+                )
+                .http2_keep_alive_timeout(*timeout)
+                .http2_keep_alive_interval(*timeout / 2)
+                .build(connector);
+                let service = tower::ServiceBuilder::new().timeout(*timeout).service(
+                    tower::util::MapResponse::new(
+                        client,
+                        |r: hyper::Response<hyper::body::Incoming>| {
+                            r.map(hyper_body::Body::wrap_body)
+                        },
+                    ),
+                );
+                (uri, kube_proxy::LokiClient::new(service))
             }
         };
 
@@ -288,6 +297,8 @@ struct LokiPoll<'a> {
     next_start_epoch_timestamp: SinceTime,
 }
 
+use http_body_util::BodyExt;
+
 impl<'a> LokiPoll<'a> {
     // poll_next will extract response from Loki service and perform following actions:
     // 1. Get last log epoch timestamp
@@ -306,16 +317,16 @@ impl<'a> LokiPoll<'a> {
         let request = http::Request::builder()
             .method("GET")
             .uri(&request_str)
-            .body(hyper::body::Body::empty())?;
+            .body(hyper_body::Body::empty())?;
 
         let response = self.client().ready().await?.call(request).await?;
         if !response.status().is_success() {
-            let body_bytes = hyper::body::to_bytes(response.into_body()).await?;
+            let body_bytes = response.into_body().collect().await?.to_bytes();
             let text = String::from_utf8(body_bytes.to_vec()).unwrap_or_default();
             return Err(LokiError::Response(text));
         }
 
-        let body = hyper::body::aggregate(response.into_body()).await?;
+        let body = response.collect().await?.aggregate();
         let loki_response: LokiResponse = serde_json::from_reader(body.reader())?;
 
         if loki_response.status == "success" && loki_response.data.result.is_empty() {

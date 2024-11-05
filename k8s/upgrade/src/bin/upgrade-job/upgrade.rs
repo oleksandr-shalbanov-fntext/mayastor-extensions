@@ -28,8 +28,8 @@ pub(crate) mod path;
 /// This function starts and sees upgrade through to the end.
 pub(crate) async fn upgrade(opts: &CliArgs) -> Result<()> {
     let mut event = EventRecorder::builder()
-        .with_pod_name(&opts.pod_name())
-        .with_namespace(&opts.namespace())
+        .with_pod_name(opts.pod_name())
+        .with_namespace(opts.namespace())
         .build()
         .await?;
 

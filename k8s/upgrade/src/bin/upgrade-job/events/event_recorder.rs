@@ -10,7 +10,10 @@ use k8s_openapi::{api::core::v1::ObjectReference, serde_json};
 use kube::runtime::events::{Event, EventType, Recorder};
 use serde::Serialize;
 use snafu::{ensure, ResultExt};
-use std::{fmt::Display, time::Duration};
+use std::{
+    fmt::{Display, Formatter},
+    time::Duration,
+};
 use tokio::{select, sync::mpsc, time::sleep};
 use tracing::error;
 
@@ -287,16 +290,17 @@ pub enum EventAction {
     Successful,
 }
 
-impl ToString for EventAction {
-    fn to_string(&self) -> String {
-        match self {
-            Self::Failed => String::from("Failed"),
-            Self::ValidationFailed => String::from("Validation Failed"),
-            Self::UpgradingCP => String::from("Upgrading control-plane"),
-            Self::UpgradedCP => String::from("Upgraded control-plane"),
-            Self::UpgradingDP => String::from("Upgrading data-plane"),
-            Self::UpgradedDP => String::from("Upgraded data-plane"),
-            Self::Successful => String::from("Successful"),
-        }
+impl Display for EventAction {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let action = match self {
+            Self::Failed => "Failed",
+            Self::ValidationFailed => "Validation Failed",
+            Self::UpgradingCP => "Upgrading control-plane",
+            Self::UpgradedCP => "Upgraded control-plane",
+            Self::UpgradingDP => "Upgrading data-plane",
+            Self::UpgradedDP => "Upgraded data-plane",
+            Self::Successful => "Successful",
+        };
+        write!(f, "{action}")
     }
 }

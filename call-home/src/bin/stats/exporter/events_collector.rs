@@ -7,7 +7,10 @@ use prometheus::{
     CounterVec, Opts,
 };
 use serde::{Deserialize, Serialize};
-use std::{fmt::Debug, ops::DerefMut};
+use std::{
+    fmt::{Debug, Display, Formatter},
+    ops::DerefMut,
+};
 use tracing::error;
 
 /// StatsCollector contains the list of custom metrics that has to be exposed by exporter.
@@ -33,15 +36,15 @@ pub enum Metrics {
     Nexus,
     Unknown,
 }
-
-impl ToString for Metrics {
-    fn to_string(&self) -> String {
-        match self {
-            Metrics::Pool => "pool".to_string(),
-            Metrics::Volume => "volume".to_string(),
-            Metrics::Nexus => "nexus".to_string(),
-            Metrics::Unknown => "".to_string(),
-        }
+impl Display for Metrics {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let metric = match self {
+            Metrics::Pool => "pool",
+            Metrics::Volume => "volume",
+            Metrics::Nexus => "nexus",
+            Metrics::Unknown => "",
+        };
+        write!(f, "{metric}")
     }
 }
 

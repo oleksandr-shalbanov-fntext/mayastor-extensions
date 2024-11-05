@@ -11,30 +11,24 @@ use crate::{
 
 use std::{path::PathBuf, process};
 
-#[cfg(debug_assertions)]
 use crate::collect::{
     common::Stringer,
     constants::MAYASTOR_SERVICE,
     k8s_resources::k8s_resource_dump::K8sResourceDumperClient,
-    logs::LogCollection,
-    logs::{LogResource, Logger},
+    logs::{LogCollection, LogResource, Logger},
     resources::traits::Topologer,
     utils::{flush_tool_log_file, write_to_log_file},
 };
-#[cfg(debug_assertions)]
 use futures::future;
 
 /// Dumper interacts with various services to collect information like mayastor resource(s),
 /// mayastor service logs and state of mayastor artifacts and mayastor specific artifacts from
 /// etcd
 pub(crate) struct ResourceDumper {
-    #[cfg(debug_assertions)]
     topologer: Option<Box<dyn Topologer>>,
     archive: archive::Archive,
     dir_path: String,
-    #[cfg(debug_assertions)]
     logger: Box<dyn Logger>,
-    #[cfg(debug_assertions)]
     k8s_resource_dumper: K8sResourceDumperClient,
     etcd_dumper: Option<EtcdStore>,
     output_format: OutputFormat,
@@ -84,7 +78,6 @@ impl ResourceDumper {
             }
         };
 
-        #[cfg(debug_assertions)]
         let logger = match LogCollection::new_logger(
             config.kube_config_path.clone(),
             config.namespace.clone(),
@@ -103,7 +96,6 @@ impl ResourceDumper {
             }
         };
 
-        #[cfg(debug_assertions)]
         let k8s_resource_dumper = match K8sResourceDumperClient::new(
             config.kube_config_path.clone(),
             config.namespace.clone(),
@@ -134,20 +126,16 @@ impl ResourceDumper {
         };
 
         ResourceDumper {
-            #[cfg(debug_assertions)]
             topologer: config.topologer,
             archive,
             dir_path: new_dir,
-            #[cfg(debug_assertions)]
             logger,
-            #[cfg(debug_assertions)]
             k8s_resource_dumper,
             etcd_dumper,
             output_format: config.output_format,
         }
     }
 
-    #[cfg(debug_assertions)]
     /// Dumps information associated to given resource(s)
     pub(crate) async fn dump_info(&mut self, folder_path: String) -> Result<(), Error> {
         let mut errors = Vec::new();
@@ -211,7 +199,7 @@ impl ResourceDumper {
         log("Completed collection of Kubernetes resource specific information".to_string());
 
         let mut path: PathBuf = std::path::PathBuf::new();
-        path.push(&self.dir_path.clone());
+        path.push(self.dir_path.clone());
 
         // Collect ETCD dump specific to mayastor
         log("Collecting mayastor specific information from Etcd...".to_string());
@@ -255,7 +243,7 @@ impl ResourceDumper {
     /// Dumps information associated to given resource(s)
     pub(crate) async fn dump_etcd(&mut self) -> Result<(), Error> {
         let mut path: PathBuf = std::path::PathBuf::new();
-        path.push(&self.dir_path.clone());
+        path.push(self.dir_path.clone());
 
         self.etcd_dumper
             .as_mut()
@@ -289,7 +277,6 @@ impl ResourceDumper {
         Ok(())
     }
 
-    #[cfg(debug_assertions)]
     /// Copies the temporary directory content into archive and delete temporary directory
     pub fn fill_archive_and_delete_tmp(&mut self) -> Result<(), Error> {
         // Log which is visible in archive system log file

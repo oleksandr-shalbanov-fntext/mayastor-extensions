@@ -30,6 +30,7 @@ pub(crate) struct K8sResourceDumperClient {
 /// Errors pertaining to k8s resource dumper module
 #[derive(Debug)]
 #[allow(clippy::enum_variant_names)]
+#[allow(unused)]
 pub(crate) enum K8sResourceDumperError {
     K8sResourceError(K8sResourceError),
     IOError(std::io::Error),

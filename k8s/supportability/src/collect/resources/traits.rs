@@ -73,6 +73,7 @@ impl ResourceInformation {
 
 /// Implements functionality to inspect topology information
 pub(crate) trait Topologer: Downcast + Debug {
+    #[allow(unused)]
     fn get_printable_topology(&self) -> Result<(String, String), ResourceError>;
     fn dump_topology_info(&self, dir_path: String) -> Result<(), ResourceError>;
     fn get_unhealthy_resource_info(&self) -> HashSet<ResourceInformation>;

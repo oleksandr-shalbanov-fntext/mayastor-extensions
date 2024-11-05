@@ -16,6 +16,7 @@ use url::Url;
 #[derive(Debug, Snafu)]
 #[snafu(visibility(pub(crate)))]
 #[snafu(context(suffix(false)))]
+#[allow(unused)]
 pub(crate) enum Error {
     /// Error for when the storage REST API URL is parsed.
     #[snafu(display(

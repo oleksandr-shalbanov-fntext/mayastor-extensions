@@ -83,11 +83,13 @@ let
     "dependencies/control-plane/utils/dependencies/tracing-filter"
     "dependencies/control-plane/utils/dependencies/version-info"
     "dependencies/control-plane/utils/utils-lib"
+    "dependencies/control-plane/utils/hyper-body"
     "dependencies/control-plane/utils/shutdown"
     "dependencies/control-plane/utils/platform"
     "dependencies/control-plane/utils/pstor"
     "dependencies/control-plane/rpc"
     "dependencies/control-plane/k8s/forward"
+    "dependencies/control-plane/k8s/proxy"
     "dependencies/control-plane/k8s/operators"
     "k8s"
   ];

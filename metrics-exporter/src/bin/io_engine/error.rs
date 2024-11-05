@@ -1,4 +1,5 @@
 #[derive(Debug)]
+#[allow(unused)]
 /// Error used in exporters
 pub enum ExporterError {
     GrpcResponseError(String),

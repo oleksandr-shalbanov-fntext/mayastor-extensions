@@ -6,10 +6,9 @@ use crate::client::{
     pool_stat::{PoolIoStat, PoolIoStats},
     replica_stat::{ReplicaIoStat, ReplicaIoStats},
 };
-use actix_web::http::Uri;
 use std::{net::SocketAddr, time::Duration};
 use tokio::time::sleep;
-use tonic::transport::Channel;
+use tonic::transport::{Channel, Uri};
 use tracing::error;
 
 /// Timeout for gRPC connection.
@@ -110,6 +109,7 @@ pub(crate) async fn init_client() -> Result<GrpcClient, ExporterError> {
     let timeout = Timeouts::new(Duration::from_secs(1), Duration::from_secs(5));
     let pod_ip = get_pod_ip()?;
     let _ = get_node_name()?;
+
     let endpoint = Uri::builder()
         .scheme("https")
         .authority(SocketAddr::new(pod_ip, 10124).to_string())

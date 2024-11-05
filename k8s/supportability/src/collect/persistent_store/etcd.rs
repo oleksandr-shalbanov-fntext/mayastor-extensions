@@ -71,7 +71,7 @@ impl EtcdStore {
                 .etcd
                 .get_values_paged_all(prefix, ETCD_PAGED_LIMIT)
                 .await?;
-            if !first && dump.get(0).is_some() {
+            if !first && !dump.is_empty() {
                 dump.remove(0);
             }
             first = false;

@@ -4,10 +4,9 @@ members = [
     "console-logger",
     "metrics-exporter",
     "k8s/plugin",
-    "k8s/proxy",
     "k8s/supportability",
     "k8s/upgrade",
 ]
 
-exclude = [ "./dependencies/control-plane" ]
+exclude = ["./dependencies/control-plane"]
 resolver = "1"

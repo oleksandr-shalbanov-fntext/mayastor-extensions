@@ -339,7 +339,7 @@ impl UpgradeEventClient {
 
         event_list.sort_by(|a, b| b.event_time.cmp(&a.event_time));
         let latest_event = event_list
-            .get(0)
+            .first()
             .ok_or(error::UpgradeEventNotPresent.build())?;
         Ok(latest_event.to_owned())
     }

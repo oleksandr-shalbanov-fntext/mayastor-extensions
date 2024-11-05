@@ -23,6 +23,7 @@ const SPEC: &str = "spec";
 /// information of Kubernetes Objects
 #[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
+#[allow(unused)]
 pub(crate) enum K8sResourceError {
     ClientConfigError(kube::config::KubeconfigError),
     InferConfigError(kube::config::InferConfigError),

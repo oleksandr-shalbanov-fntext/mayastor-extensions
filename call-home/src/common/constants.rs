@@ -126,7 +126,6 @@ pub const RECEIVER_ENDPOINT: &str = ::constants::CALL_HOME_ENDPOINT;
 
 /// CALL_HOME_FREQUENCY_IN_HOURS is the frequency of call-home metrics transmission, in hours.
 /// The function call_home_frequency() returns the frequency as an std::time::Duration.
-
 const CALL_HOME_FREQUENCY_IN_HOURS: i64 = 24;
 
 pub fn call_home_frequency() -> std::time::Duration {
