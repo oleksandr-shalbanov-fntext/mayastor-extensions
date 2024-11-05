@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-# -o errexit: abort script if one command fails
 # -o errtrace: the ERR trap is inherited by shell functions
+if [ "$(ps -o comm= -p $$)" != "zsh" ]; then
+  set -o errtrace
+fi
+
+# -o errexit: abort script if one command fails
 # -o pipefail: entire command fails if pipe fails
-set -o errexit -o errtrace -o pipefail
+set -o errexit -o pipefail
 
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]:-"$0"}")")"
 export ROOT_DIR="$SCRIPT_DIR/../.."
