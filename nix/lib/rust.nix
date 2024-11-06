@@ -30,7 +30,7 @@ rec {
     os = platform: builtins.replaceStrings [ "${platform.qemuArch}-" ] [ "" ] platform.system;
     hostPlatform = "${pkgs.rust.toRustTargetSpec pkgs.pkgsStatic.hostPlatform}";
     targetPlatform = "${pkgs.rust.toRustTargetSpec pkgs.pkgsCross."${target}".hostPlatform}";
-    pkgsTarget = if hostPlatform == targetPlatform then pkgs.pkgsStatic else pkgs.pkgsCross."${target}";
+    pkgsTarget = if hostPlatform == targetPlatform then pkgs else pkgs.pkgsCross."${target}";
     pkgsTargetNative = if hostPlatform == targetPlatform then pkgs else if hostOs == targetOs then
       import sources.nixpkgs
         {
