@@ -6,6 +6,7 @@ on:
     branches:
       - 'release/**'
       - 'develop'
+      - 'testx'
 
 jobs:
   kubectl-plugin:
@@ -18,22 +19,22 @@ jobs:
       matrix:
         include:
           # NOTE: Update the .krew.yaml file (if required) when making changes here.
-          - os: ubuntu-latest
-            target: linux-musl
-            arch: x86_64
+          #          - os: ubuntu-latest
+          #            target: linux-musl
+          #            arch: x86_64
           - os: ubuntu-latest
             target: linux-musl
             arch: aarch64
-          - os: macos-14
-            target: apple-darwin
-            arch: aarch64
-          - os: macos-13
-            target: apple-darwin
-            arch: x86_64
-          - os: ubuntu-latest
-            target: windows-gnu
-            arch: x86_64
-            suffix: .exe
+    #          - os: macos-14
+    #            target: apple-darwin
+    #            arch: aarch64
+    #          - os: macos-13
+    #            target: apple-darwin
+    #            arch: x86_64
+    #          - os: ubuntu-latest
+    #            target: windows-gnu
+    #            arch: x86_64
+    #            suffix: .exe
     steps:
       - uses: actions/checkout@v4
         env:
@@ -59,7 +60,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v11
         with:
           kvm: false
-      - uses: DeterminateSystems/magic-nix-cache-action@v6
+      # - uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: |
           nix-build -A utils.release.${{ matrix.arch }}.${{ matrix.target }}.kubectl-plugin --arg incremental false ${{ matrix.system }}
       - name: Archive executable
