@@ -349,6 +349,8 @@ csi:
       ctrl_loss_tmo: "1980"
       # Kato (keep alive timeout) in seconds
       keep_alive_tmo: ""
+      # -- Fallback to nvme-tcp if nvme-rdma is enabled for Mayastor but rdma is not available on a particular csi-node
+      tcpFallback: true
     # -- The kubeletDir directory for the csi-node plugin
     kubeletDir: /var/lib/kubelet
     pluginMountPath: /csi
