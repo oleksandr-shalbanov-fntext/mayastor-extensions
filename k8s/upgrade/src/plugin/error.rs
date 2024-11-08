@@ -206,7 +206,7 @@ pub enum Error {
 
     /// Openapi configuration error.
     #[snafu(display("openapi configuration Error: {}", source))]
-    OpenapiClientConfiguration { source: anyhow::Error },
+    OpenapiClientConfiguration { source: kube_proxy::Error },
 
     /// Error when opening a file.
     #[snafu(display("Failed to open file {}: {}", filepath.display(), source))]

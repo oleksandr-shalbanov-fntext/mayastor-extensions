@@ -13,7 +13,7 @@ pub(crate) enum EtcdError {
     K8sResource(K8sResourceError),
     IOError(std::io::Error),
     Custom(String),
-    CreateClient(anyhow::Error),
+    CreateClient(kube_proxy::Error),
 }
 
 impl From<StoreError> for EtcdError {

@@ -25,6 +25,7 @@ console-logger = { path = "../../console-logger" }
 supportability = { path = "../supportability" }
 upgrade = { path = "../upgrade" }
 kube-proxy = { path = "../../dependencies/control-plane/k8s/proxy" }
+kube-forward = { path = "../../dependencies/control-plane/k8s/forward" }
 tokio = { version = "1.41.0" }
 anyhow = "1.0.92"
 clap = { version = "4.5.20", features = ["color", "derive"] }

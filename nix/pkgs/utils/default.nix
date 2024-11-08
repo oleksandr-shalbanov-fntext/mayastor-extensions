@@ -15,19 +15,9 @@ let
   buildKubectlPlugin = { target, release, addBuildOptions ? [ ] }:
     let
       platformDeps = channel.rustPlatformDeps { inherit target sources; };
-      # required for darwin because its pkgsStatic is not static!
-      static_ssl = (platformDeps.pkgsTarget.pkgsStatic.openssl.override {
-        static = true;
-      });
       rustBuildOpts = channel.rustBuilderOpts { rustPlatformDeps = platformDeps; } // {
         buildOptions = [ "-p" "kubectl-plugin" ] ++ addBuildOptions;
-        ${if !pkgs.hostPlatform.isDarwin then "addNativeBuildInputs" else null} = [ platformDeps.pkgsTargetNative.pkgsStatic.openssl.dev ];
-        addPreBuild = preBuildOpenApi + ''
-          export OPENSSL_STATIC=1
-        '' + lib.optionalString (pkgs.hostPlatform.isDarwin) ''
-          export OPENSSL_LIB_DIR=${static_ssl.out}/lib
-          export OPENSSL_INCLUDE_DIR=${static_ssl.dev}/include
-        '';
+        addPreBuild = preBuildOpenApi;
       };
       name = "kubectl-plugin";
     in

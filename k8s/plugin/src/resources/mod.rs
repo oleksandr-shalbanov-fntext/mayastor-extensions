@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use clap::Parser;
 use openapi::tower::client::Url;
 use plugin::{
@@ -157,6 +158,18 @@ impl From<plugin::resources::error::Error> for Error {
 impl From<anyhow::Error> for Error {
     fn from(e: anyhow::Error) -> Self {
         Error::Generic(e)
+    }
+}
+
+impl From<kube_proxy::Error> for Error {
+    fn from(e: kube_proxy::Error) -> Self {
+        if let error @ kube_proxy::Error::Forward {
+            source: kube_forward::Error::ServiceNotFound { .. },
+        } = e
+        {
+            return Error::Generic(anyhow!("{error}\n Are you on the correct namespace?"));
+        }
+        Error::Generic(anyhow!(e))
     }
 }
 

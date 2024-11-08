@@ -1,6 +1,7 @@
 { pkgs }:
 let
   lib = pkgs.lib;
+  sources = import ../sources.nix;
 in
 rec {
   makeRustTarget = platform: pkgs.rust.toRustTargetSpec platform;
@@ -30,7 +31,7 @@ rec {
     os = platform: builtins.replaceStrings [ "${platform.qemuArch}-" ] [ "" ] platform.system;
     hostPlatform = "${pkgs.rust.toRustTargetSpec pkgs.pkgsStatic.hostPlatform}";
     targetPlatform = "${pkgs.rust.toRustTargetSpec pkgs.pkgsCross."${target}".hostPlatform}";
-    pkgsTarget = if hostPlatform == targetPlatform then pkgs.pkgsStatic else pkgs.pkgsCross."${target}";
+    pkgsTarget = if hostPlatform == targetPlatform then pkgs else pkgs.pkgsCross."${target}";
     pkgsTargetNative = if hostPlatform == targetPlatform then pkgs else if hostOs == targetOs then
       import sources.nixpkgs
         {
@@ -63,14 +64,7 @@ rec {
     addPreBuild = "";
     nativeBuildInputs = with pkgs;
       [ pkg-config protobuf paperclip which git ] ++
-        [ rustPlatformDeps.pkgsTarget.stdenv.cc ] ++
-        lib.optional (rustPlatformDeps.pkgsTarget.hostPlatform.isDarwin)
-          [
-            (rustPlatformDeps.pkgsTarget.libiconv.override {
-              enableStatic = true;
-              enableShared = false;
-            })
-          ];
+        [ rustPlatformDeps.pkgsTarget.stdenv.cc ];
     addNativeBuildInputs = [ ];
     buildInputs = if (rustPlatformDeps.pkgsTarget.hostPlatform.isWindows) then with rustPlatformDeps.pkgsTargetNative.windows; [ mingw_w64_pthreads pthreads ] else [ ];
   };
