@@ -99,6 +99,7 @@ spec:
         - "--nvme-ctrl-loss-tmo={{ .Values.csi.node.nvme.ctrl_loss_tmo }}"{{ end }}{{ if .Values.csi.node.nvme.keep_alive_tmo }}
         - "--nvme-keep-alive-tmo={{ .Values.csi.node.nvme.keep_alive_tmo }}"{{ end }}
         - "--nvme-nr-io-queues={{ include "coreCount" . }}"
+        - "--nvme-connect-fallback={{ .Values.csi.node.nvme.tcpFallback }}"
         {{- range $key, $val := .Values.csi.node.topology.segments }}
         - "--node-selector={{ $key }}={{ $val }}"
         {{- end }}
