@@ -22,5 +22,6 @@ __pycache__
 /kubectl-plugin
 
 # Pytest assets
-/test-bin-*
+/test-dir-*
 tests/bdd/venv
+pytest.log
